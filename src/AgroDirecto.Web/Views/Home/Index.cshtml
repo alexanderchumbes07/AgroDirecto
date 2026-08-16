@@ -1,0 +1,133 @@
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["AnchoCompleto"] = true;
+}
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+    <div class="container hero-contenido">
+        <div class="row">
+            <div class="col-lg-10 hero-texto">
+              <div class="hero-panel">
+                <h1>
+                    Del campo a tu mesa,
+                    <span class="resalte">sin intermediarios</span>
+                </h1>
+
+                <p class="mt-2 mb-3">
+                    Conectamos a agricultores locales con personas que valoran lo natural,
+                    fresco y justo.
+                </p>
+
+                <a class="btn btn-agro d-inline-flex align-items-center gap-2"
+                   asp-controller="Cuenta" asp-action="Registro">
+                    Únete a AgroDirecto
+                    <span class="icono-inline icono-hoja" aria-hidden="true"></span>
+                </a>
+
+                <ul class="hero-ventajas mt-3">
+                    <li>
+                        <span class="icono-slot icono-fresco" aria-hidden="true"></span>
+                        <span>Productos<br />frescos</span>
+                    </li>
+                    <li>
+                        <span class="icono-slot icono-precio" aria-hidden="true"></span>
+                        <span>Precios<br />justos</span>
+                    </li>
+                    <li>
+                        <span class="icono-slot icono-apoyo" aria-hidden="true"></span>
+                        <span>Apoyas al<br />agricultor</span>
+                    </li>
+                </ul>
+              </div>
+            </div>
+        </div>
+
+        <!-- Insignia flotante sobre la foto. Se oculta en pantallas
+             angostas, donde taparía el texto. -->
+        <div class="insignia d-none d-lg-flex">
+            <span class="icono-slot icono-natural" aria-hidden="true"></span>
+            <span>Fresco<br />y natural</span>
+        </div>
+    </div>
+
+    <!-- Onda que separa el hero de la siguiente sección -->
+    <svg class="hero-onda" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0,40 C360,90 1080,-10 1440,40 L1440,80 L0,80 Z" fill="#fff"></path>
+    </svg>
+</section>
+
+<!-- ============ ¿POR QUÉ? ============ -->
+<section class="seccion-porque">
+    <div class="container">
+        <h2 class="text-center mb-4">¿Por qué AgroDirecto?</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <article class="card h-100 tarjeta-hover">
+                    <div class="card-body">
+                        <span class="icono-slot icono-grande icono-tractor mb-3" aria-hidden="true"></span>
+                        <h3 class="card-title h5">Para el agricultor</h3>
+                        <p class="card-text text-secondary mb-0">
+                            Publica tu cosecha y vende sin que un intermediario se lleve tu margen.
+                        </p>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-md-4">
+                <article class="card h-100 tarjeta-hover">
+                    <div class="card-body">
+                        <span class="icono-slot icono-grande icono-canasta mb-3" aria-hidden="true"></span>
+                        <h3 class="card-title h5">Para el cliente</h3>
+                        <p class="card-text text-secondary mb-0">
+                            Productos frescos de temporada, con el precio justo y directo.
+                        </p>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-md-4">
+                <article class="card h-100 tarjeta-hover">
+                    <div class="card-body">
+                        <span class="icono-slot icono-grande icono-manos mb-3" aria-hidden="true"></span>
+                        <h3 class="card-title h5">Sin intermediarios</h3>
+                        <p class="card-text text-secondary mb-0">
+                            Una cadena más corta significa menos merma y mejor precio en ambos extremos.
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ LLAMADA A LA ACCIÓN ============ -->
+<section class="franja-cta">
+    <div class="container">
+        <div class="row align-items-center g-3">
+            <div class="col-lg-7 d-flex align-items-center gap-3">
+                <span class="icono-slot icono-grande icono-planta d-none d-sm-inline-flex" aria-hidden="true"></span>
+                <p class="mb-0 fs-5">
+                    Sé parte de un movimiento que impulsa<br class="d-none d-lg-inline" />
+                    una economía más justa y sostenible.
+                </p>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                    <a class="btn btn-blanco d-inline-flex align-items-center gap-2"
+                       asp-controller="Cuenta" asp-action="Registro" asp-route-perfil="Agricultor">
+                        <span class="icono-inline icono-tractor" aria-hidden="true"></span>
+                        Soy agricultor
+                    </a>
+                    <a class="btn btn-blanco d-inline-flex align-items-center gap-2"
+                       asp-controller="Cuenta" asp-action="Registro" asp-route-perfil="Cliente">
+                        <span class="icono-inline icono-canasta" aria-hidden="true"></span>
+                        Quiero comprar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

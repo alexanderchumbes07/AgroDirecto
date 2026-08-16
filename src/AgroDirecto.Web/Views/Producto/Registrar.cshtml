@@ -1,0 +1,27 @@
+@model AgroDirecto.Web.Models.ProductoViewModel
+@{
+    ViewData["Title"] = "Publicar producto";
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelAgricultor" asp-action="Index">Mi panel</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Mis productos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Publicar</li>
+    </ol>
+</nav>
+
+<h1 class="mb-4">Publicar producto</h1>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Registrar" method="post" class="panel-form">
+            <partial name="_Formulario" model="Model" />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-agro">Publicar</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

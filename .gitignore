@@ -1,0 +1,20 @@
+# Visual Studio / .NET
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+packages/
+*.dbmdl
+*.publishsettings
+_Resharper*/
+[Tt]est[Rr]esult*/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.bak
+*.log

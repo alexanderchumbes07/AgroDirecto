@@ -1,0 +1,2 @@
+# Este archivo existe solo para que git conserve la carpeta aunque esté vacía.
+# Git no versiona carpetas vacías; al agregar el primer icono se puede borrar.

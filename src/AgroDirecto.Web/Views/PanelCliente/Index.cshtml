@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Mi panel";
+}
+
+<partial name="_MensajeExito" />
+
+<div class="portada mb-4">
+    <h1 class="h3 fw-bold mb-2">Hola, @User.Identity?.Name</h1>
+    <p class="mb-0">Este es tu panel. Desde aquí comprarás productos frescos directamente al agricultor.</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Catalogo" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">🔎</div>
+                <h2 class="card-title h5">Catálogo</h2>
+                <p class="card-text text-secondary mb-0">
+                    Busca productos y fíltralos por categoría, ubicación y precio.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Carrito" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">🛒</div>
+                <h2 class="card-title h5">Mi carrito</h2>
+                <p class="card-text text-secondary mb-0">
+                    Revisa lo que agregaste, ajusta cantidades y confirma tu pedido.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Pedido" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">🧾</div>
+                <h2 class="card-title h5">Mis pedidos</h2>
+                <p class="card-text text-secondary mb-0">
+                    Historial de tus compras y en qué estado va cada una.
+                </p>
+            </div>
+        </a>
+    </div>
+</div>

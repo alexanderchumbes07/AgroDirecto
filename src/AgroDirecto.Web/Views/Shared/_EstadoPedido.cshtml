@@ -1,0 +1,13 @@
+@model string
+@{
+    // Un color por estado, igual en todas las pantallas.
+    var clase = Model switch
+    {
+        "Pendiente"  => "text-bg-warning",
+        "Confirmado" => "text-bg-info",
+        "Entregado"  => "text-bg-success",
+        "Cancelado"  => "text-bg-secondary",
+        _            => "text-bg-light border"
+    };
+}
+<span class="badge rounded-pill @clase">@Model</span>

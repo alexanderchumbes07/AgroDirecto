@@ -1,0 +1,45 @@
+@model AgroDirecto.Web.Models.CategoriaViewModel
+@{
+    ViewData["Title"] = "Nueva categoría";
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-action="Index">Categorías</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Nueva</li>
+    </ol>
+</nav>
+
+<h1 class="mb-4">Nueva categoría</h1>
+
+<div class="row">
+    <div class="col-lg-7">
+        <form asp-action="Registrar" method="post" class="panel-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nombre" class="form-label"></label>
+                <input asp-for="Nombre" class="form-control" autofocus />
+                <span asp-validation-for="Nombre" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                <div class="form-text">Opcional. Ayuda al agricultor a elegir bien la categoría.</div>
+                <span asp-validation-for="Descripcion" class="text-danger small"></span>
+            </div>
+
+            <div class="form-check form-switch mb-4">
+                <input asp-for="Estado" class="form-check-input" role="switch" />
+                <label asp-for="Estado" class="form-check-label"></label>
+                <div class="form-text">Solo las categorías activas se ofrecen al publicar productos.</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-agro">Guardar</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

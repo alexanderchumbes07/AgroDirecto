@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<div class="sin-datos">
+    <div class="icono" aria-hidden="true">🔒</div>
+    <h1 class="h4 mb-2">No tienes acceso a esta sección</h1>
+    <p class="mb-3">
+        Tu perfil (<strong>@(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "sin rol")</strong>)
+        no tiene permiso para entrar aquí.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-agro">Volver al inicio</a>
+</div>

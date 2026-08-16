@@ -1,0 +1,130 @@
+@model AgroDirecto.Web.Models.ProductoViewModel
+@{
+    var categorias = ViewBag.Categorias as List<AgroDirecto.Web.Models.CategoriaViewModel>
+                     ?? new List<AgroDirecto.Web.Models.CategoriaViewModel>();
+    var unidades = ViewBag.Unidades as List<AgroDirecto.Web.Models.UnidadMedidaViewModel>
+                   ?? new List<AgroDirecto.Web.Models.UnidadMedidaViewModel>();
+}
+
+@* Campos compartidos por Registrar y Editar: así no se duplican y no
+   se desincronizan al cambiar algo. *@
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="Nombre" class="form-label"></label>
+    <input asp-for="Nombre" class="form-control" autofocus />
+    <span asp-validation-for="Nombre" class="text-danger small"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Descripcion" class="form-label"></label>
+    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+    <div class="form-text">Cuenta cómo se cultivó, cuándo se cosechó o para qué sirve.</div>
+    <span asp-validation-for="Descripcion" class="text-danger small"></span>
+</div>
+
+<div class="row g-3">
+    <div class="col-sm-6">
+        <label asp-for="CategoriaId" class="form-label"></label>
+        <select asp-for="CategoriaId" class="form-select">
+            <option value="">— Elige una —</option>
+            @foreach (var c in categorias)
+            {
+                <option value="@c.CategoriaId">@c.Nombre</option>
+            }
+        </select>
+        <span asp-validation-for="CategoriaId" class="text-danger small"></span>
+    </div>
+
+    <div class="col-sm-6">
+        <label asp-for="UnidadMedidaId" class="form-label"></label>
+        <select asp-for="UnidadMedidaId" class="form-select">
+            <option value="">— Elige una —</option>
+            @foreach (var u in unidades)
+            {
+                <option value="@u.UnidadMedidaId">@u.Nombre (@u.Abreviatura)</option>
+            }
+        </select>
+        <span asp-validation-for="UnidadMedidaId" class="text-danger small"></span>
+    </div>
+
+    <div class="col-sm-6">
+        <label asp-for="Precio" class="form-label"></label>
+        <input asp-for="Precio" class="form-control" type="number" step="0.01" min="0.01" />
+        <div class="form-text">Precio por cada @(unidades.Count > 0 ? "unidad de medida" : "unidad").</div>
+        <span asp-validation-for="Precio" class="text-danger small"></span>
+    </div>
+
+    <div class="col-sm-6">
+        <label asp-for="Stock" class="form-label"></label>
+        <input asp-for="Stock" class="form-control" type="number" step="0.01" min="0" />
+        <div class="form-text">Con stock en cero el producto no aparece en el catálogo.</div>
+        <span asp-validation-for="Stock" class="text-danger small"></span>
+    </div>
+
+    <div class="col-sm-6">
+        <label asp-for="MontoMinimo" class="form-label"></label>
+        <input asp-for="MontoMinimo" class="form-control" type="number" step="0.01" min="0" />
+        <div class="form-text">Monto mínimo en soles requerido para procesar la compra de este producto.</div>
+        <span asp-validation-for="MontoMinimo" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="mb-3 mt-3">
+    <label asp-for="ImagenUrl" class="form-label"></label>
+    <input asp-for="ImagenUrl" id="campo-imagen" class="form-control" placeholder="https://ejemplo.com/foto.jpg" />
+    <div class="form-text">
+        Opcional. Tiene que ser la dirección <strong>del archivo de imagen</strong>, no la de la página:
+        debe terminar en <code>.jpg</code>, <code>.png</code> o <code>.webp</code>.
+        En el navegador: clic derecho sobre la foto → <em>Copiar dirección de la imagen</em>.
+    </div>
+    <span asp-validation-for="ImagenUrl" class="text-danger small"></span>
+
+    <div id="vista-previa" class="mt-2 d-none">
+        <img id="vista-previa-img" alt="Vista previa de la foto" class="rounded border"
+             style="max-height:9rem" />
+        <div id="vista-previa-error" class="form-text text-danger d-none">
+            Esa dirección no carga como imagen. Revisa que sea el archivo y no la página web.
+        </div>
+    </div>
+</div>
+
+<div class="form-check form-switch mb-4">
+    <input asp-for="Estado" class="form-check-input" role="switch" />
+    <label asp-for="Estado" class="form-check-label"></label>
+    <div class="form-text">Desactívalo para retirarlo del catálogo sin borrarlo.</div>
+</div>
+
+<script>
+    // Vista previa de la foto: avisa en el formulario si la dirección no
+    // carga como imagen, en vez de descubrirlo recién en el catálogo.
+    (function () {
+        const campo  = document.getElementById('campo-imagen');
+        const caja   = document.getElementById('vista-previa');
+        const img    = document.getElementById('vista-previa-img');
+        const aviso  = document.getElementById('vista-previa-error');
+        let espera   = null;
+
+        function revisar() {
+            const url = campo.value.trim();
+            if (!url) { caja.classList.add('d-none'); return; }
+            aviso.classList.add('d-none');
+            img.classList.remove('d-none');
+            img.src = url;
+            caja.classList.remove('d-none');
+        }
+
+        img.addEventListener('error', function () {
+            img.classList.add('d-none');
+            aviso.classList.remove('d-none');
+        });
+
+        campo.addEventListener('input', function () {
+            clearTimeout(espera);
+            espera = setTimeout(revisar, 500);
+        });
+
+        revisar();
+    })();
+</script>

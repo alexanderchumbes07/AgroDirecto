@@ -1,0 +1,29 @@
+@model AgroDirecto.Web.Models.ProductoViewModel
+@{
+    ViewData["Title"] = "Editar producto";
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelAgricultor" asp-action="Index">Mi panel</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Mis productos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Editar</li>
+    </ol>
+</nav>
+
+<h1 class="mb-4">Editar producto</h1>
+
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Editar" method="post" class="panel-form">
+            <input type="hidden" asp-for="ProductoId" />
+
+            <partial name="_Formulario" model="Model" />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-agro">Guardar cambios</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

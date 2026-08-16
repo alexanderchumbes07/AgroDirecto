@@ -1,0 +1,47 @@
+@model AgroDirecto.Web.Models.DistritoViewModel
+@{
+    ViewData["Title"] = "Nuevo distrito";
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelAdmin" asp-action="Index">Administración</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Distritos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Nuevo</li>
+    </ol>
+</nav>
+
+<h1 class="mb-4">Nuevo distrito</h1>
+
+<div class="row">
+    <div class="col-lg-7">
+        <form asp-action="Registrar" method="post" class="panel-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nombre" class="form-label"></label>
+                <input asp-for="Nombre" class="form-control" autofocus />
+                <span asp-validation-for="Nombre" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                    <label asp-for="Provincia" class="form-label"></label>
+                    <input asp-for="Provincia" class="form-control" />
+                    <span asp-validation-for="Provincia" class="text-danger small"></span>
+                </div>
+
+                <div class="col-sm-6">
+                    <label asp-for="Departamento" class="form-label"></label>
+                    <input asp-for="Departamento" class="form-control" />
+                    <span asp-validation-for="Departamento" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-agro">Guardar</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

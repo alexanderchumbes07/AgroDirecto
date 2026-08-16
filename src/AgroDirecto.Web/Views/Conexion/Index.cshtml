@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Prueba de conexión";
+}
+
+<h1 class="mb-4">Prueba de conexión</h1>
+
+@if (ViewBag.Exito == true)
+{
+    <div class="alert alert-success">
+        <strong>Conexión exitosa.</strong>
+        <div class="small mt-1">@ViewBag.Mensaje</div>
+    </div>
+
+    @if (ViewBag.Total != null)
+    {
+        <div class="card" style="max-width: 20rem;">
+            <div class="card-body text-center">
+                <p class="text-secondary mb-1">Categorías en la base de datos</p>
+                <p class="display-5 fw-bold mb-0" style="color: var(--verde-700);">@ViewBag.Total</p>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-danger">
+        <strong>No se pudo conectar.</strong>
+        <div class="small mt-1">@ViewBag.Mensaje</div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title h6">Qué revisar</h2>
+            <ul class="mb-0 text-secondary">
+                <li>Que hayas ejecutado <code>database/01_CrearBaseDatos.sql</code>.</li>
+                <li>Que el servicio de SQL Server esté iniciado.</li>
+                <li>Que el <code>Server=</code> de <code>appsettings.json</code> coincida con tu instancia.</li>
+            </ul>
+        </div>
+    </div>
+}
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary mt-4">Volver al inicio</a>

@@ -1,0 +1,49 @@
+@model AgroDirecto.Web.Models.CategoriaViewModel
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-action="Index">Categorías</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Nombre</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+    <h1 class="mb-0">@Model.Nombre</h1>
+    @if (Model.Estado)
+    {
+        <span class="badge rounded-pill text-bg-success">Activa</span>
+    }
+    else
+    {
+        <span class="badge rounded-pill text-bg-secondary">Inactiva</span>
+    }
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-secondary fw-normal">Código</dt>
+                    <dd class="col-sm-8">@Model.CategoriaId</dd>
+
+                    <dt class="col-sm-4 text-secondary fw-normal">Nombre</dt>
+                    <dd class="col-sm-8">@Model.Nombre</dd>
+
+                    <dt class="col-sm-4 text-secondary fw-normal">Descripción</dt>
+                    <dd class="col-sm-8 mb-0">
+                        @(string.IsNullOrWhiteSpace(Model.Descripcion) ? "—" : Model.Descripcion)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a asp-action="Editar" asp-route-id="@Model.CategoriaId" class="btn btn-agro">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+        </div>
+    </div>
+</div>

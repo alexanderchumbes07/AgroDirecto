@@ -1,0 +1,101 @@
+@model IEnumerable<AgroDirecto.Web.Models.CompraViewModel>
+@{
+    ViewData["Title"] = "Mis pedidos";
+}
+
+<partial name="_MensajeExito" />
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelCliente" asp-action="Index">Mi panel</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Mis pedidos</li>
+    </ol>
+</nav>
+
+<h1 class="mb-1">Mis pedidos</h1>
+<p class="text-secondary mb-4">
+    Cuando compras a varios agricultores, cada uno prepara y entrega su parte por separado.
+</p>
+
+@if (!Model.Any())
+{
+    <div class="sin-datos">
+        <div class="icono" aria-hidden="true">🧾</div>
+        <p class="mb-3">Todavía no has hecho ningún pedido.</p>
+        <a class="btn btn-agro" asp-controller="Catalogo" asp-action="Index">Ir al catálogo</a>
+    </div>
+}
+else
+{
+    <div class="tabla-scroll">
+        <table class="table tabla-agro align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Pedido</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Entrega</th>
+                    <th scope="col">Productos</th>
+                    <th scope="col" class="text-center">Estado</th>
+                    <th scope="col" class="text-end">Total</th>
+                    <th scope="col" class="text-end"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr data-compra="@c.CompraId">
+                        <td class="fw-medium">#@c.CompraId</td>
+                        <td class="text-secondary">@c.FechaCompra.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="text-secondary small">@c.DireccionEntrega</td>
+                        <td class="small text-secondary">
+                            @c.Items producto@(c.Items == 1 ? "" : "s")
+                            @if (c.Proveedores > 1)
+                            {
+                                <span class="d-block">de @c.Proveedores agricultores</span>
+                            }
+                        </td>
+                        <td class="text-center" data-celda="estado">
+                            <partial name="_EstadoPedido" model="@c.Estado" />
+                        </td>
+                        <td class="text-end fw-medium text-nowrap">S/ @c.Total.ToString("N2")</td>
+                        <td class="text-end">
+                            <a asp-action="Detalle" asp-route-id="@c.CompraId"
+                               class="btn btn-sm btn-outline-secondary">Ver detalle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/signalr.min.js"></script>
+    <script src="~/js/avisos.js"></script>
+    <script>
+        // El agricultor confirmó, entregó o canceló: se actualiza el badge
+        // de esa compra sin recargar la página.
+        AgroAvisos.conexion.on("EstadoCambiado", function (datos) {
+            const fila = document.querySelector('tr[data-compra="' + datos.compraId + '"]');
+            if (fila) {
+                const celda = fila.querySelector('[data-celda="estado"]');
+                if (celda) {
+                    const clases = {
+                        "Pendiente":  "text-bg-warning",
+                        "Confirmado": "text-bg-info",
+                        "Entregado":  "text-bg-success",
+                        "Cancelado":  "text-bg-secondary"
+                    };
+                    celda.innerHTML =
+                        '<span class="badge rounded-pill ' + (clases[datos.estado] || "text-bg-light border") + '"></span>';
+                    // textContent, no innerHTML: el estado viene del servidor
+                    // pero nunca se inyecta como HTML.
+                    celda.querySelector("span").textContent = datos.estado;
+                }
+            }
+            AgroAvisos.mostrar("Tu pedido #" + datos.compraId + " ahora está " + datos.estado.toLowerCase() + ".");
+        });
+
+        AgroAvisos.iniciar();
+    </script>
+}

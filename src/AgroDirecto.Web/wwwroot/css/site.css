@@ -1,0 +1,593 @@
+/* ================================================================
+   AgroDirecto - hoja de estilos
+   Complementa a Bootstrap 5. Todos los colores y medidas salen de
+   las variables de :root, así el tema se cambia en un solo lugar.
+   ================================================================ */
+
+:root {
+    /* Verdes: del más oscuro al más claro */
+    --verde-900: #14532d;
+    --verde-700: #15803d;   /* fondo de botones y cabeceras (contraste OK con blanco) */
+    --verde-600: #199c4b;
+    --verde-100: #dcfce7;
+    --verde-50:  #f2fbf5;
+
+    --tierra: #b45309;      /* acento cálido, para avisos */
+
+    --gris-900: #111827;
+    --gris-600: #4b5563;
+    --gris-200: #e5e7eb;
+    --gris-50:  #f9fafb;
+
+    --radio: .625rem;
+    --sombra: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .1);
+    --sombra-alta: 0 4px 6px -1px rgba(16, 24, 40, .08), 0 10px 15px -3px rgba(16, 24, 40, .08);
+}
+
+body {
+    background-color: var(--gris-50);
+    color: var(--gris-900);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;      /* empuja el pie de página al fondo */
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    font-weight: 700;
+    color: var(--verde-900);
+}
+
+/* ---------------- Barra de navegación ---------------- */
+
+.navbar-agro {
+    background-color: var(--verde-900);
+    box-shadow: var(--sombra);
+}
+
+.navbar-agro .navbar-brand {
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+
+.navbar-agro .nav-link {
+    color: rgba(255, 255, 255, .82);
+    border-radius: var(--radio);
+    padding-inline: .75rem;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.navbar-agro .nav-link:hover,
+.navbar-agro .nav-link:focus-visible {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .1);
+}
+
+/* Enlace de la sección en la que estás */
+.navbar-agro .nav-link.activo {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .16);
+    font-weight: 600;
+}
+
+/* ---------------- Botones ---------------- */
+
+.btn-agro {
+    background-color: var(--verde-700);
+    border: 1px solid var(--verde-700);
+    color: #fff;
+    font-weight: 500;
+}
+
+.btn-agro:hover,
+.btn-agro:focus {
+    background-color: var(--verde-900);
+    border-color: var(--verde-900);
+    color: #fff;
+}
+
+.btn-agro-outline {
+    background-color: transparent;
+    border: 1px solid var(--verde-700);
+    color: var(--verde-700);
+    font-weight: 500;
+}
+
+.btn-agro-outline:hover,
+.btn-agro-outline:focus {
+    background-color: var(--verde-700);
+    color: #fff;
+}
+
+/* Foco visible y coherente en todo el sitio */
+.btn:focus-visible,
+.form-control:focus,
+.form-check-input:focus,
+.page-link:focus {
+    box-shadow: 0 0 0 .2rem rgba(21, 128, 61, .25);
+    border-color: var(--verde-600);
+    outline: none;
+}
+
+/* ---------------- Portada ---------------- */
+
+.portada {
+    background-color: var(--verde-100);
+    border-radius: var(--radio);
+    padding: 3rem;
+}
+
+.portada h1 {
+    color: var(--verde-900);
+}
+
+.portada p {
+    color: var(--gris-600);
+}
+
+/* ---------------- Tarjetas ---------------- */
+
+.card {
+    border: 1px solid var(--gris-200);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    transition: box-shadow .18s ease, transform .18s ease;
+}
+
+.tarjeta-hover:hover {
+    box-shadow: var(--sombra-alta);
+    transform: translateY(-2px);
+}
+
+.card-title {
+    color: var(--verde-900);
+    font-weight: 600;
+}
+
+/* ---------------- Tablas ---------------- */
+
+.tabla-agro {
+    background-color: #fff;
+    border: 1px solid var(--gris-200);
+    border-radius: var(--radio);
+    overflow: hidden;       /* redondea las esquinas de la cabecera */
+    margin-bottom: 0;
+}
+
+.tabla-agro thead th {
+    background-color: var(--verde-700);
+    color: #fff;
+    font-weight: 600;
+    font-size: .875rem;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    border-bottom: none;
+    white-space: nowrap;
+}
+
+.tabla-agro tbody td {
+    vertical-align: middle;
+    border-color: var(--gris-200);
+}
+
+.tabla-agro tbody tr:hover {
+    background-color: var(--verde-50);
+}
+
+/* En pantallas chicas la tabla se desplaza sola en vez de romper la página */
+.tabla-scroll {
+    border-radius: var(--radio);
+    overflow-x: auto;
+}
+
+/* ---------------- Formularios ---------------- */
+
+.panel-form {
+    background-color: #fff;
+    border: 1px solid var(--gris-200);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--gris-900);
+}
+
+/* ASP.NET marca el resumen de validación con esta clase cuando NO hay
+   errores. Sin ocultarlo, quedaría una caja roja vacía en el formulario. */
+.validation-summary-valid {
+    display: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--verde-700);
+    border-color: var(--verde-700);
+}
+
+/* ---------------- Paginación ---------------- */
+
+.pagination .page-link {
+    color: var(--verde-700);
+    border-color: var(--gris-200);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--verde-700);
+    border-color: var(--verde-700);
+    color: #fff;
+}
+
+/* ---------------- Catálogo ---------------- */
+
+.catalogo-foto {
+    width: 100%;
+    height: 9rem;
+    object-fit: cover;
+    border-radius: var(--radio) var(--radio) 0 0;
+    background-color: var(--verde-50);
+}
+
+/* Marcador cuando el producto todavía no tiene foto */
+.catalogo-foto-vacia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--verde-700);
+    background-color: var(--verde-100);
+}
+
+/* ---------------- Estado vacío ---------------- */
+
+.sin-datos {
+    background-color: #fff;
+    border: 1px dashed var(--gris-200);
+    border-radius: var(--radio);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--gris-600);
+}
+
+.sin-datos .icono {
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: .75rem;
+}
+
+/* ================================================================
+   HUECOS DE ICONO
+   Cada icono es un círculo con la imagen de fondo. Mientras el archivo
+   no exista en wwwroot/img/iconos/ el círculo se ve vacío: nunca sale
+   el icono roto del navegador. Al copiar el .svg aparece solo.
+   ================================================================ */
+
+.icono-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 50%;
+    background-color: var(--verde-100);
+    background-repeat: no-repeat;
+    background-position: center;
+    /* 'contain' respeta la proporción del archivo: los iconos no son
+       cuadrados y con un tamaño fijo se deformarían.
+       OJO: el relleno va en rem, no en porcentaje. Un padding en % se
+       calcula sobre el ancho del CONTENEDOR, no del propio círculo, y
+       dejaba el área de la imagen en cero. */
+    background-size: contain;
+    background-origin: content-box;
+    padding: .38rem;
+    box-sizing: border-box;
+}
+
+.icono-slot.icono-grande {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: .6rem;
+}
+
+/* Icono suelto dentro de un botón, sin círculo */
+.icono-inline {
+    display: inline-block;
+    width: 1.45rem;
+    height: 1.45rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* Logo de la marca. Va como <img> y no como fondo CSS: así se ajusta
+   solo a su proporción y lleva texto alternativo para accesibilidad.
+   El nombre "AgroDirecto" ya está dentro de la imagen, por eso no se
+   escribe al lado. */
+.marca-logo {
+    display: block;
+    height: 3.4rem;
+    width: auto;
+    max-width: 100%;
+}
+
+.marca-logo-pie {
+    height: 4rem;
+}
+
+/* --- Un archivo por icono. Ver wwwroot/img/LEEME.md ---
+   Varios se reutilizan en más de un sitio: el tractor aparece en la
+   tarjeta del agricultor y en el botón "Soy agricultor", la canasta en
+   la del cliente y en "Quiero comprar". */
+.icono-hoja      { background-image: url('../img/iconos/hoja.png'); }
+.icono-fresco    { background-image: url('../img/iconos/hoja.png'); }
+.icono-precio    { background-image: url('../img/iconos/precios.png'); }
+.icono-apoyo     { background-image: url('../img/iconos/apoyo.png'); }
+.icono-natural   { background-image: url('../img/iconos/planta.png'); }
+.icono-tractor   { background-image: url('../img/iconos/tractor.png'); }
+.icono-canasta   { background-image: url('../img/iconos/canasta.png'); }
+.icono-manos     { background-image: url('../img/iconos/manos.png'); }
+.icono-planta    { background-image: url('../img/iconos/planta.png'); }
+
+
+/* ================================================================
+   PORTADA PÚBLICA
+   ================================================================ */
+
+/* La foto cubre TODA la sección; el texto va encima.
+   Si el archivo no existe se ve el verde claro de fondo. */
+.hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: clamp(15rem, 11rem + 13vw, 22rem);
+    background-color: var(--verde-50);
+    background-image: url('../img/fotos/hero.png');
+    background-size: cover;
+    background-position: center right;
+}
+
+.hero-contenido {
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
+}
+
+/* Panel translúcido detrás del texto. Sustituye al velo que cubría
+   toda la foto: ahora la imagen se ve limpia y solo se aclara el
+   rectángulo donde hay que leer. */
+.hero-panel {
+    background-color: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: var(--radio);
+    padding: clamp(1.35rem, 1.1rem + 1.4vw, 2rem);
+}
+
+.hero h1 {
+    font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem);
+    line-height: 1.12;
+    font-weight: 800;
+    color: var(--gris-900);
+    margin-bottom: 0;
+}
+
+.hero h1 .resalte {
+    display: block;
+    color: var(--verde-700);
+}
+
+.hero-texto p {
+    color: var(--gris-600);
+    max-width: 64ch;
+    font-size: 1.05rem;
+}
+
+/* Las tres ventajas bajo el botón */
+.hero-ventajas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: .875rem;
+    color: var(--gris-600);
+}
+
+.hero-ventajas li {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.insignia {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .15rem;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, .93);
+    box-shadow: var(--sombra-alta);
+    justify-content: center;
+    font-size: .82rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--verde-900);
+}
+
+/* Dentro de la insignia el icono va suelto, sin su propio círculo:
+   el blanco de la insignia ya hace de fondo. Dos círculos concéntricos
+   se veían mal. */
+.insignia .icono-slot {
+    width: 3.4rem;
+    height: 3.4rem;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+.hero-onda {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(1.5rem, 2.5vw, 2.75rem);
+    margin-bottom: -1px;
+}
+
+.seccion-porque {
+    background-color: #fff;
+    padding-block: clamp(1rem, .5rem + 2vw, 2.5rem) clamp(2.5rem, 2rem + 3vw, 4rem);
+}
+
+.seccion-porque h2 {
+    color: var(--verde-900);
+    font-weight: 700;
+}
+
+/* Franja verde de llamada a la acción */
+.franja-cta {
+    background-color: var(--verde-700);
+    color: #fff;
+    padding-block: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+}
+
+.franja-cta .icono-slot {
+    background-color: rgba(255, 255, 255, .18);
+}
+
+.btn-blanco {
+    background-color: #fff;
+    color: var(--verde-900);
+    border: 1px solid #fff;
+    font-weight: 600;
+}
+
+.btn-blanco:hover,
+.btn-blanco:focus {
+    background-color: var(--verde-50);
+    color: var(--verde-900);
+}
+
+
+/* ---------------- Pie de página ---------------- */
+
+.pie-agro {
+    background-color: var(--verde-900);
+    color: #fff;
+    font-size: .9rem;
+    padding-block: 2.5rem 1.5rem;
+    margin-top: 0;
+}
+
+.pie-agro .pie-texto {
+    color: rgba(255, 255, 255, .75);
+    font-size: .875rem;
+}
+
+.pie-linea {
+    border-color: rgba(255, 255, 255, .18);
+    margin-block: 1.75rem 1.25rem;
+}
+
+.red-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, .12);
+    color: #fff;
+    transition: background-color .15s ease;
+}
+
+.red-social:hover,
+.red-social:focus-visible {
+    background-color: rgba(255, 255, 255, .28);
+    color: #fff;
+}
+
+.red-social svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+/* ---------------- Accesibilidad ---------------- */
+
+/* Respeta a quien pidió menos animación en su sistema operativo */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+    .tarjeta-hover:hover {
+        transform: none;
+    }
+}
+
+/* ---------------- Avisos en tiempo real (SignalR) ---------------- */
+
+/* Esquina inferior derecha, por encima de todo pero sin tapar los
+   botones: se van solos a los pocos segundos. */
+.avisos-flotantes {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1080;
+    max-width: min(22rem, calc(100vw - 2rem));
+}
+
+.avisos-flotantes .alert {
+    animation: aviso-entra .25s ease-out;
+}
+
+@keyframes aviso-entra {
+    from { opacity: 0; transform: translateY(.5rem); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .avisos-flotantes .alert { animation: none; }
+}
+
+/* ---------------- Reportes con pestañas ---------------- */
+
+/* El contenido cuelga de las pestañas: mismo fondo y borde, sin la
+   línea de arriba, para que se lea como una sola pieza. */
+.panel-reporte {
+    background-color: #fff;
+    border: 1px solid var(--gris-200);
+    border-top: 0;
+    border-radius: 0 0 var(--radio) var(--radio);
+    padding: 1.25rem;
+}
+
+.nav-tabs .nav-link {
+    color: var(--verde-700);
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--verde-700);
+    border-bottom-color: #fff;
+}
+
+.panel-reporte table caption {
+    caption-side: bottom;
+    padding-top: .75rem;
+}

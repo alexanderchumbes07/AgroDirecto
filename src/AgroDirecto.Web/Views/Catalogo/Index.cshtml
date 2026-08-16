@@ -1,0 +1,223 @@
+@{
+    ViewData["Title"] = "Catálogo";
+    var categorias = ViewBag.Categorias as List<AgroDirecto.Web.Models.CategoriaViewModel>
+                     ?? new List<AgroDirecto.Web.Models.CategoriaViewModel>();
+    var distritos = ViewBag.Distritos as List<AgroDirecto.Web.Models.DistritoViewModel>
+                    ?? new List<AgroDirecto.Web.Models.DistritoViewModel>();
+}
+
+<partial name="_MensajeExito" />
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Catálogo</h1>
+        <p class="text-secondary mb-0">Productos frescos publicados directamente por los agricultores.</p>
+    </div>
+    @if (User.IsInRole("Cliente"))
+    {
+        <a class="btn btn-agro-outline" asp-controller="Carrito" asp-action="Index">Ver mi carrito</a>
+    }
+</div>
+
+<div class="panel-form mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label for="f-buscar" class="form-label">Buscar</label>
+            <input type="search" id="f-buscar" class="form-control" placeholder="Nombre del producto..." />
+        </div>
+
+        <div class="col-md-3">
+            <label for="f-categoria" class="form-label">Categoría</label>
+            <select id="f-categoria" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var c in categorias)
+                {
+                    <option value="@c.CategoriaId">@c.Nombre</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="f-distrito" class="form-label">Ubicación</label>
+            <select id="f-distrito" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var d in distritos)
+                {
+                    <option value="@d.DistritoId">@d.Nombre</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="f-precio" class="form-label">Precio máx.</label>
+            <input type="number" id="f-precio" class="form-control" min="0" step="0.5" placeholder="S/" />
+        </div>
+    </div>
+
+    <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
+        <button id="btn-limpiar" type="button" class="btn btn-sm btn-outline-secondary">Limpiar filtros</button>
+        <span id="resumen" class="text-secondary small ms-auto" role="status" aria-live="polite"></span>
+    </div>
+</div>
+
+<div id="resultado" class="row g-3"></div>
+
+<nav id="paginacion" aria-label="Paginación del catálogo" class="mt-4"></nav>
+
+
+@section Scripts {
+<script>
+    // ================================================================
+    // FASE 5: el catálogo se llena con AJAX. La página nunca se recarga:
+    // se pide JSON al Web API y se pinta el resultado con JavaScript.
+    // ================================================================
+
+    const $buscar    = document.getElementById('f-buscar');
+    const $categoria = document.getElementById('f-categoria');
+    const $distrito  = document.getElementById('f-distrito');
+    const $precio    = document.getElementById('f-precio');
+    const $resultado = document.getElementById('resultado');
+    const $paginacion= document.getElementById('paginacion');
+    const $resumen   = document.getElementById('resumen');
+
+    let paginaActual = 1;
+    let temporizador = null;
+
+    // Evita disparar una petición por cada tecla: espera a que el
+    // usuario deje de escribir 350 ms.
+    function buscarConRetraso() {
+        clearTimeout(temporizador);
+        temporizador = setTimeout(() => { paginaActual = 1; cargar(); }, 350);
+    }
+
+    function construirUrl() {
+        const p = new URLSearchParams();
+        if ($buscar.value.trim())  p.set('buscar', $buscar.value.trim());
+        if ($categoria.value)      p.set('categoriaId', $categoria.value);
+        if ($distrito.value)       p.set('distritoId', $distrito.value);
+        if ($precio.value)         p.set('precioMax', $precio.value);
+        p.set('pagina', paginaActual);
+        return '/api/productosapi?' + p.toString();
+    }
+
+    function escapar(t) {
+        const d = document.createElement('div');
+        d.textContent = t ?? '';
+        return d.innerHTML;
+    }
+
+    // Si la dirección guardada no carga (borrada, o es una página y no una
+    // imagen), se reemplaza por el marcador en lugar de dejar el ícono roto.
+    function fotoRota(img) {
+        const vacio = document.createElement('div');
+        vacio.className = 'catalogo-foto catalogo-foto-vacia';
+        vacio.setAttribute('aria-hidden', 'true');
+        vacio.textContent = '🧺';
+        img.replaceWith(vacio);
+    }
+
+    function tarjeta(p) {
+        const imagen = p.imagenUrl
+            ? `<img src="${escapar(p.imagenUrl)}" alt="${escapar(p.nombre)}" class="catalogo-foto"
+                    onerror="fotoRota(this)">`
+            : `<div class="catalogo-foto catalogo-foto-vacia" aria-hidden="true">🧺</div>`;
+
+        // Formulario normal, no fetch: si el visitante no ha iniciado
+        // sesión, el navegador sigue la redirección al login por sí solo.
+        const comprar = `
+            <form method="post" action="/Carrito/Agregar" class="mt-3 d-flex gap-1">
+              <input type="hidden" name="productoId" value="${p.productoId}">
+              <input type="number" name="cantidad" value="1" min="0.01" step="0.01" max="${p.stock}"
+                     class="form-control form-control-sm" style="max-width:5rem"
+                     aria-label="Cantidad de ${escapar(p.nombre)}">
+              <button type="submit" class="btn btn-sm btn-agro flex-grow-1">Agregar</button>
+            </form>`;
+
+        return `
+        <div class="col-sm-6 col-lg-3">
+          <article class="card h-100 tarjeta-hover">
+            ${imagen}
+            <div class="card-body d-flex flex-column">
+              <span class="badge rounded-pill text-bg-light border align-self-start mb-2">${escapar(p.categoria)}</span>
+              <h2 class="card-title h6 mb-1">${escapar(p.nombre)}</h2>
+              <p class="small text-secondary mb-2">${escapar(p.agricultor)}${p.distrito ? ' · ' + escapar(p.distrito) : ''}</p>
+              <p class="mt-auto mb-0 fw-bold" style="color: var(--verde-700);">
+                S/ ${p.precio.toFixed(2)} <span class="fw-normal text-secondary small">/ ${escapar(p.unidad)}</span>
+              </p>
+              ${comprar}
+            </div>
+          </article>
+        </div>`;
+    }
+
+    function pintarPaginacion(pagina, totalPaginas) {
+        if (totalPaginas <= 1) { $paginacion.innerHTML = ''; return; }
+
+        let html = '<ul class="pagination mb-0">';
+        for (let i = 1; i <= totalPaginas; i++) {
+            html += `<li class="page-item ${i === pagina ? 'active' : ''}">
+                       <a class="page-link" href="#" data-pagina="${i}">${i}</a>
+                     </li>`;
+        }
+        $paginacion.innerHTML = html + '</ul>';
+    }
+
+    async function cargar() {
+        $resumen.textContent = 'Buscando...';
+
+        try {
+            const resp = await fetch(construirUrl());
+            if (!resp.ok) throw new Error('El servidor respondió ' + resp.status);
+
+            const datos = await resp.json();
+
+            if (datos.productos.length === 0) {
+                $resultado.innerHTML = `
+                    <div class="col-12">
+                      <div class="sin-datos">
+                        <div class="icono" aria-hidden="true">🔎</div>
+                        <p class="mb-0">No hay productos que coincidan con los filtros.</p>
+                      </div>
+                    </div>`;
+                $paginacion.innerHTML = '';
+            } else {
+                $resultado.innerHTML = datos.productos.map(tarjeta).join('');
+                pintarPaginacion(datos.pagina, datos.totalPaginas);
+            }
+
+            $resumen.textContent = datos.total === 1
+                ? '1 producto encontrado'
+                : `${datos.total} productos encontrados`;
+
+        } catch (e) {
+            $resultado.innerHTML = `
+                <div class="col-12">
+                  <div class="alert alert-danger mb-0">No se pudo cargar el catálogo. ${escapar(e.message)}</div>
+                </div>`;
+            $resumen.textContent = '';
+        }
+    }
+
+    $buscar.addEventListener('input', buscarConRetraso);
+    $precio.addEventListener('input', buscarConRetraso);
+    [$categoria, $distrito].forEach(s =>
+        s.addEventListener('change', () => { paginaActual = 1; cargar(); }));
+
+    document.getElementById('btn-limpiar').addEventListener('click', () => {
+        $buscar.value = ''; $categoria.value = ''; $distrito.value = ''; $precio.value = '';
+        paginaActual = 1;
+        cargar();
+    });
+
+    $paginacion.addEventListener('click', e => {
+        const a = e.target.closest('a[data-pagina]');
+        if (!a) return;
+        e.preventDefault();
+        paginaActual = parseInt(a.dataset.pagina, 10);
+        cargar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    cargar();   // primera carga
+</script>
+}

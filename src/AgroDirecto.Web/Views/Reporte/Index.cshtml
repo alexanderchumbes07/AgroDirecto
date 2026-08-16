@@ -1,0 +1,328 @@
+@model IEnumerable<AgroDirecto.Web.Models.ReporteVentaViewModel>
+@{
+    ViewData["Title"] = "Reportes";
+
+    int pagina = ViewBag.Pagina ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    var desde = ViewBag.Desde as DateTime?;
+    var hasta = ViewBag.Hasta as DateTime?;
+    int? agricultorId = ViewBag.AgricultorId as int?;
+    string tab = ViewBag.Tab as string ?? "productos";
+
+    var resumen = ViewBag.Resumen as AgroDirecto.Web.Models.ReporteResumenViewModel
+                  ?? new AgroDirecto.Web.Models.ReporteResumenViewModel();
+    var masVendidos = ViewBag.MasVendidos as List<AgroDirecto.Web.Models.ProductoVendidoViewModel>
+                      ?? new List<AgroDirecto.Web.Models.ProductoVendidoViewModel>();
+    var porAgricultor = ViewBag.PorAgricultor as List<AgroDirecto.Web.Models.VentaAgricultorViewModel>
+                        ?? new List<AgroDirecto.Web.Models.VentaAgricultorViewModel>();
+    var agricultores = ViewBag.Agricultores as List<(int AgricultorId, string Nombre)>
+                       ?? new List<(int, string)>();
+
+    bool hayFiltro = desde.HasValue || hasta.HasValue || agricultorId.HasValue;
+    string nombreAgricultor = agricultores.FirstOrDefault(a => a.AgricultorId == agricultorId).Nombre ?? "";
+}
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelAdmin" asp-action="Index">Administración</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Reportes</li>
+    </ol>
+</nav>
+
+<div class="mb-4">
+    <h1 class="mb-1">Reportes de ventas</h1>
+    <p class="text-secondary mb-0">
+        Los pedidos cancelados no cuentan como venta en ninguno de estos reportes.
+    </p>
+</div>
+
+@* ---------------- Filtros ---------------- *@
+<form asp-action="Index" method="get" class="panel-form mb-4">
+    <input type="hidden" name="tab" value="@tab" />
+
+    <div class="row g-3 align-items-end">
+        <div class="col-sm-6 col-lg-3">
+            <label for="desde" class="form-label">Desde</label>
+            <input type="date" id="desde" name="desde" class="form-control"
+                   value="@(desde?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <label for="hasta" class="form-label">Hasta</label>
+            <input type="date" id="hasta" name="hasta" class="form-control"
+                   value="@(hasta?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="col-sm-8 col-lg-4">
+            <label for="agricultorId" class="form-label">Agricultor</label>
+            <select id="agricultorId" name="agricultorId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var a in agricultores)
+                {
+                    <option value="@a.AgricultorId" selected="@(agricultorId == a.AgricultorId)">@a.Nombre</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-4 col-lg-2 d-grid">
+            <button class="btn btn-agro" type="submit">Filtrar</button>
+        </div>
+    </div>
+
+    @if (hayFiltro)
+    {
+        <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
+            <span class="text-secondary small">Mostrando:</span>
+            @if (desde.HasValue || hasta.HasValue)
+            {
+                <span class="badge rounded-pill text-bg-light border">
+                    @(desde?.ToString("dd/MM/yyyy") ?? "inicio") — @(hasta?.ToString("dd/MM/yyyy") ?? "hoy")
+                </span>
+            }
+            @if (agricultorId.HasValue)
+            {
+                <span class="badge rounded-pill text-bg-light border">@nombreAgricultor</span>
+            }
+            <a class="btn btn-sm btn-link text-secondary ms-auto"
+               asp-action="Index" asp-route-tab="@tab">Quitar filtros</a>
+        </div>
+    }
+</form>
+
+@* ---------------- Resumen: siempre visible ---------------- *@
+<div class="row g-3 mb-4">
+    <div class="col-sm-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="fs-4 mb-1" aria-hidden="true">💰</div>
+                <p class="text-secondary small mb-1">Total vendido</p>
+                <p class="h3 mb-0" style="color: var(--verde-700);">S/ @resumen.TotalVendido.ToString("N2")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="fs-4 mb-1" aria-hidden="true">📦</div>
+                <p class="text-secondary small mb-1">Unidades vendidas</p>
+                <p class="h3 mb-0">@resumen.UnidadesVendidas.ToString("0.##")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="fs-4 mb-1" aria-hidden="true">🧾</div>
+                <p class="text-secondary small mb-1">Pedidos</p>
+                <p class="h3 mb-0">@resumen.Pedidos</p>
+                <p class="small text-secondary mb-0">uno por agricultor</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ---------------- Los tres reportes, cada uno en su pestaña ---------------- *@
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link @(tab == "productos" ? "active" : "")" id="tab-productos"
+                data-bs-toggle="tab" data-bs-target="#panel-productos" type="button"
+                role="tab" aria-controls="panel-productos"
+                aria-selected="@(tab == "productos" ? "true" : "false")">
+            Productos más vendidos
+            <span class="badge rounded-pill text-bg-light border ms-1">@masVendidos.Count</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link @(tab == "agricultores" ? "active" : "")" id="tab-agricultores"
+                data-bs-toggle="tab" data-bs-target="#panel-agricultores" type="button"
+                role="tab" aria-controls="panel-agricultores"
+                aria-selected="@(tab == "agricultores" ? "true" : "false")">
+            Ventas por agricultor
+            <span class="badge rounded-pill text-bg-light border ms-1">@porAgricultor.Count</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link @(tab == "detalle" ? "active" : "")" id="tab-detalle"
+                data-bs-toggle="tab" data-bs-target="#panel-detalle" type="button"
+                role="tab" aria-controls="panel-detalle"
+                aria-selected="@(tab == "detalle" ? "true" : "false")">
+            Detalle de ventas
+            <span class="badge rounded-pill text-bg-light border ms-1">@ViewBag.Total</span>
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content panel-reporte">
+
+    @* ---- Productos más vendidos ---- *@
+    <div class="tab-pane fade @(tab == "productos" ? "show active" : "")"
+         id="panel-productos" role="tabpanel" aria-labelledby="tab-productos">
+        @if (masVendidos.Count == 0)
+        {
+            <div class="sin-datos py-4"><p class="mb-0">Sin ventas en el periodo seleccionado.</p></div>
+        }
+        else
+        {
+            <div class="tabla-scroll">
+                <table class="table tabla-agro align-middle mb-0">
+                    <caption class="text-secondary small">Ordenado de mayor a menor por importe vendido.</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:3rem">#</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Agricultor</th>
+                            <th scope="col" class="text-end">Unidades</th>
+                            <th scope="col" class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int puesto = 1; }
+                        @foreach (var p in masVendidos)
+                        {
+                            <tr>
+                                <td class="text-secondary">@puesto</td>
+                                <td class="fw-medium">@p.Producto</td>
+                                <td class="small text-secondary">@p.Agricultor</td>
+                                <td class="text-end">@p.UnidadesVendidas.ToString("0.##")</td>
+                                <td class="text-end fw-medium text-nowrap">S/ @p.TotalVendido.ToString("N2")</td>
+                            </tr>
+                            puesto++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    @* ---- Ventas por agricultor ---- *@
+    <div class="tab-pane fade @(tab == "agricultores" ? "show active" : "")"
+         id="panel-agricultores" role="tabpanel" aria-labelledby="tab-agricultores">
+        @if (porAgricultor.Count == 0)
+        {
+            <div class="sin-datos py-4"><p class="mb-0">Sin ventas en el periodo seleccionado.</p></div>
+        }
+        else
+        {
+            <div class="tabla-scroll">
+                <table class="table tabla-agro align-middle mb-0">
+                    <caption class="text-secondary small">
+                        Este reporte no se filtra por agricultor: siempre los compara a todos.
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Agricultor</th>
+                            <th scope="col">Distrito</th>
+                            <th scope="col" class="text-end">Pedidos</th>
+                            <th scope="col" class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in porAgricultor)
+                        {
+                            <tr>
+                                <td class="fw-medium">@a.Agricultor</td>
+                                <td class="small text-secondary">@a.Distrito</td>
+                                <td class="text-end">@a.Pedidos</td>
+                                <td class="text-end fw-medium text-nowrap">S/ @a.TotalVendido.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end text-secondary">Total general</td>
+                            <td class="text-end fw-bold text-nowrap">
+                                S/ @porAgricultor.Sum(a => a.TotalVendido).ToString("N2")
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+    </div>
+
+    @* ---- Detalle línea por línea ---- *@
+    <div class="tab-pane fade @(tab == "detalle" ? "show active" : "")"
+         id="panel-detalle" role="tabpanel" aria-labelledby="tab-detalle">
+        @if (!Model.Any())
+        {
+            <div class="sin-datos py-4">
+                <div class="icono" aria-hidden="true">📊</div>
+                <p class="mb-0">No hay ventas registradas en el periodo seleccionado.</p>
+            </div>
+        }
+        else
+        {
+            <div class="tabla-scroll">
+                <table class="table tabla-agro align-middle mb-0">
+                    <caption class="text-secondary small">
+                        Una fila por producto vendido. Página @pagina de @totalPaginas.
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Pedido</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Agricultor</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col" class="text-end">Cantidad</th>
+                            <th scope="col" class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var v in Model)
+                        {
+                            <tr>
+                                <td class="fw-medium">#@v.PedidoId</td>
+                                <td class="text-secondary small text-nowrap">@v.FechaPedido.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div>@v.Producto</div>
+                                    <div class="small text-secondary">@v.Categoria</div>
+                                </td>
+                                <td class="small">@v.Agricultor</td>
+                                <td class="small">@v.Cliente</td>
+                                <td class="text-end text-nowrap">@v.Cantidad.ToString("0.##") @v.Unidad</td>
+                                <td class="text-end fw-medium text-nowrap">S/ @v.Subtotal.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (totalPaginas > 1)
+            {
+                <nav aria-label="Paginación del detalle" class="mt-3">
+                    <ul class="pagination mb-0">
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == pagina ? "active" : "")">
+                                @* Se arrastra tab=detalle para volver a esta misma pestaña *@
+                                <a class="page-link" asp-action="Index"
+                                   asp-route-desde="@(desde?.ToString("yyyy-MM-dd"))"
+                                   asp-route-hasta="@(hasta?.ToString("yyyy-MM-dd"))"
+                                   asp-route-agricultorId="@agricultorId"
+                                   asp-route-tab="detalle"
+                                   asp-route-pagina="@i"
+                                   aria-current="@(i == pagina ? "page" : null)">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Al cambiar de pestaña se guarda cuál está activa en la URL, sin
+        // recargar. Así "Filtrar", paginar o recargar mantienen la vista.
+        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(function (boton) {
+            boton.addEventListener('shown.bs.tab', function (e) {
+                const nombre = e.target.id.replace('tab-', '');
+                const url = new URL(window.location);
+                url.searchParams.set('tab', nombre);
+                history.replaceState(null, '', url);
+
+                const campo = document.querySelector('form input[name="tab"]');
+                if (campo) campo.value = nombre;
+            });
+        });
+    </script>
+}

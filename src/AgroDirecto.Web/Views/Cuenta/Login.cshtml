@@ -1,0 +1,33 @@
+@model AgroDirecto.Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <h1 class="mb-4 text-center">Iniciar sesión</h1>
+
+        <form asp-action="Login" asp-route-volverA="@ViewBag.VolverA" method="post" class="panel-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="username" autofocus />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-agro w-100">Entrar</button>
+        </form>
+
+        <p class="text-center text-secondary mt-3 mb-0">
+            ¿No tienes cuenta?
+            <a asp-action="Registro">Regístrate aquí</a>
+        </p>
+    </div>
+</div>

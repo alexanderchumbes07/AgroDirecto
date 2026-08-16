@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Administración";
+}
+
+<partial name="_MensajeExito" />
+
+<div class="portada mb-4">
+    <h1 class="h3 fw-bold mb-2">Administración</h1>
+    <p class="mb-0">Datos maestros del sistema. Todo lo que los agricultores y clientes usan al publicar o comprar.</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Categoria" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">🗂️</div>
+                <h2 class="card-title h5">Categorías</h2>
+                <p class="card-text text-secondary mb-0">
+                    Clasificación de los productos: verduras, frutas, granos, tubérculos.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="UnidadMedida" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">⚖️</div>
+                <h2 class="card-title h5">Unidades de medida</h2>
+                <p class="card-text text-secondary mb-0">
+                    Cómo se vende cada producto: kilo, unidad, atado, docena, saco.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Distrito" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">📍</div>
+                <h2 class="card-title h5">Distritos</h2>
+                <p class="card-text text-secondary mb-0">
+                    Ubicaciones de agricultores y clientes, para filtrar el catálogo.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Usuario" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">👥</div>
+                <h2 class="card-title h5">Usuarios</h2>
+                <p class="card-text text-secondary mb-0">
+                    Activa o desactiva cuentas y aprueba a los agricultores.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <a class="card h-100 tarjeta-hover text-decoration-none"
+           asp-controller="Reporte" asp-action="Index">
+            <div class="card-body">
+                <div class="fs-3 mb-2" aria-hidden="true">📊</div>
+                <h2 class="card-title h5">Reportes</h2>
+                <p class="card-text text-secondary mb-0">
+                    Ventas por periodo, productos más vendidos y ventas por agricultor.
+                </p>
+            </div>
+        </a>
+    </div>
+</div>

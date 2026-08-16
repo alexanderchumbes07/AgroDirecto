@@ -1,0 +1,111 @@
+@model IEnumerable<AgroDirecto.Web.Models.UnidadMedidaViewModel>
+@{
+    ViewData["Title"] = "Unidades de medida";
+    int pagina = ViewBag.Pagina ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    string? buscar = ViewBag.Buscar as string;
+}
+
+<partial name="_MensajeExito" />
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelAdmin" asp-action="Index">Administración</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Unidades de medida</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Unidades de medida</h1>
+        <p class="text-secondary mb-0">
+            Cómo se vende cada producto.
+            <span class="badge rounded-pill text-bg-light border ms-1">@ViewBag.Total registradas</span>
+        </p>
+    </div>
+    <a class="btn btn-agro" asp-action="Registrar">+ Nueva unidad</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-sm-auto flex-grow-1" style="max-width: 26rem;">
+        <label for="buscar" class="visually-hidden">Buscar unidad</label>
+        <input type="search" id="buscar" name="buscar" value="@buscar"
+               class="form-control" placeholder="Buscar por nombre o abreviatura..." />
+    </div>
+    <div class="col-sm-auto">
+        <button class="btn btn-agro-outline" type="submit">Buscar</button>
+        @if (!string.IsNullOrWhiteSpace(buscar))
+        {
+            <a class="btn btn-link text-secondary" asp-action="Index">Limpiar</a>
+        }
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="sin-datos">
+        <div class="icono" aria-hidden="true">⚖️</div>
+        @if (!string.IsNullOrWhiteSpace(buscar))
+        {
+            <p class="mb-3">No hay unidades que coincidan con <strong>“@buscar”</strong>.</p>
+            <a class="btn btn-agro-outline" asp-action="Index">Ver todas</a>
+        }
+        else
+        {
+            <p class="mb-3">Todavía no hay unidades de medida registradas.</p>
+            <a class="btn btn-agro" asp-action="Registrar">Registrar la primera</a>
+        }
+    </div>
+}
+else
+{
+    <div class="tabla-scroll">
+        <table class="table tabla-agro align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Abreviatura</th>
+                    <th scope="col" class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td class="text-secondary">@u.UnidadMedidaId</td>
+                        <td class="fw-medium">@u.Nombre</td>
+                        <td><span class="badge rounded-pill text-bg-light border">@u.Abreviatura</span></td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Detalle" asp-route-id="@u.UnidadMedidaId"
+                               class="btn btn-sm btn-outline-secondary">Ver</a>
+                            <a asp-action="Editar" asp-route-id="@u.UnidadMedidaId"
+                               class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <form asp-action="Eliminar" asp-route-id="@u.UnidadMedidaId" method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar la unidad @u.Nombre?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (totalPaginas > 1)
+    {
+        <nav aria-label="Paginación" class="mt-3">
+            <ul class="pagination mb-0">
+                @for (int i = 1; i <= totalPaginas; i++)
+                {
+                    <li class="page-item @(i == pagina ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-buscar="@buscar" asp-route-pagina="@i"
+                           aria-current="@(i == pagina ? "page" : null)">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}
