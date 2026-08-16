@@ -121,7 +121,7 @@ public class CarritoRepositorio : ICarritoRepositorio
 
     // ---------- Checkout ----------
 
-    public int RegistrarPedido(int clienteId, string direccionEntrega)
+    public int RegistrarPedido(int clienteId, string direccionEntrega, int? distritoId, string? referencia)
     {
         using var cn = _bd.ObtenerConexion();
         cn.Open();
@@ -130,6 +130,8 @@ public class CarritoRepositorio : ICarritoRepositorio
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@ClienteId", clienteId);
         cmd.Parameters.AddWithValue("@DireccionEntrega", direccionEntrega);
+        cmd.Parameters.AddWithValue("@DistritoId", (object?)distritoId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@Referencia", (object?)referencia ?? DBNull.Value);
 
         var pId = new SqlParameter("@CompraId", SqlDbType.Int)
         {
@@ -163,6 +165,8 @@ public class CarritoRepositorio : ICarritoRepositorio
                 FechaCompra      = dr.GetDateTime(dr.GetOrdinal("FechaCompra")),
                 Total            = dr.GetDecimal(dr.GetOrdinal("Total")),
                 DireccionEntrega = Texto(dr, "DireccionEntrega"),
+                Distrito         = Texto(dr, "Distrito"),
+                Referencia       = Texto(dr, "Referencia"),
                 Proveedores      = dr.GetInt32(dr.GetOrdinal("Proveedores")),
                 Items            = dr.GetInt32(dr.GetOrdinal("Items")),
                 Estado           = dr.GetString(dr.GetOrdinal("Estado"))
@@ -195,7 +199,9 @@ public class CarritoRepositorio : ICarritoRepositorio
                 CompraId         = dr.GetInt32(dr.GetOrdinal("CompraId")),
                 FechaCompra      = dr.GetDateTime(dr.GetOrdinal("FechaCompra")),
                 Total            = dr.GetDecimal(dr.GetOrdinal("TotalCompra")),
-                DireccionEntrega = Texto(dr, "DireccionEntrega")
+                DireccionEntrega = Texto(dr, "DireccionEntrega"),
+                Distrito         = Texto(dr, "Distrito"),
+                Referencia       = Texto(dr, "Referencia")
             };
 
             int pedidoId = dr.GetInt32(dr.GetOrdinal("PedidoId"));
@@ -262,9 +268,11 @@ public class CarritoRepositorio : ICarritoRepositorio
                 Estado           = dr.GetString(dr.GetOrdinal("Estado")),
                 Cliente          = dr.GetString(dr.GetOrdinal("Cliente")),
                 TelefonoCliente  = Texto(dr, "TelefonoCliente"),
-                DireccionEntrega = Texto(dr, "DireccionEntrega"),
-                Total            = dr.GetDecimal(dr.GetOrdinal("Total")),
-                Items            = dr.GetInt32(dr.GetOrdinal("Items"))
+                DireccionEntrega  = Texto(dr, "DireccionEntrega"),
+                DistritoEntrega   = Texto(dr, "Distrito"),
+                ReferenciaEntrega = Texto(dr, "Referencia"),
+                Total             = dr.GetDecimal(dr.GetOrdinal("Total")),
+                Items             = dr.GetInt32(dr.GetOrdinal("Items"))
             });
 
         return lista;

@@ -18,7 +18,7 @@ public interface ICarritoRepositorio
 
     // Checkout: transacción que crea la compra, la reparte en un pedido por
     // agricultor y descuenta el stock. Devuelve el CompraId.
-    int RegistrarPedido(int clienteId, string direccionEntrega);
+    int RegistrarPedido(int clienteId, string direccionEntrega, int? distritoId, string? referencia);
 
     // Lo que ve el cliente: sus compras, con el detalle agrupado por proveedor.
     List<CompraViewModel> ListarComprasPorCliente(int clienteId);
