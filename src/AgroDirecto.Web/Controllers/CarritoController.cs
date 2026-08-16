@@ -17,12 +17,15 @@ public class CarritoController : Controller
     private readonly ICarritoRepositorio _repo;
     private readonly IHubContext<PedidosHub> _hub;
     private readonly IProductoRepositorio _productoRepo;
+    private readonly IDistritoRepositorio _distritoRepo;
 
-    public CarritoController(ICarritoRepositorio repo, IHubContext<PedidosHub> hub, IProductoRepositorio productoRepo)
+    public CarritoController(ICarritoRepositorio repo, IHubContext<PedidosHub> hub,
+        IProductoRepositorio productoRepo, IDistritoRepositorio distritoRepo)
     {
         _repo = repo;
         _hub = hub;
         _productoRepo = productoRepo;
+        _distritoRepo = distritoRepo;
     }
 
     // GET: /Carrito
@@ -33,6 +36,7 @@ public class CarritoController : Controller
 
         var carrito = _repo.Obtener(clienteId.Value);
         carrito.DireccionEntrega = _repo.ObtenerDireccionCliente(UsuarioActual());
+        carrito.Distritos = _distritoRepo.ListarTodos();
 
         return View(carrito);
     }
@@ -101,10 +105,16 @@ public class CarritoController : Controller
 
     // POST: /Carrito/Confirmar  → el checkout
     [HttpPost]
-    public IActionResult Confirmar(string direccionEntrega)
+    public IActionResult Confirmar(int? distritoId, string direccionEntrega, string? referencia)
     {
         int? clienteId = ClienteActual();
         if (clienteId is null) return SinPerfil();
+
+        if (distritoId is null)
+        {
+            TempData["Error"] = "Selecciona el distrito de entrega.";
+            return RedirectToAction("Index");
+        }
 
         if (string.IsNullOrWhiteSpace(direccionEntrega))
         {
@@ -115,7 +125,8 @@ public class CarritoController : Controller
         int compraId;
         try
         {
-            compraId = _repo.RegistrarPedido(clienteId.Value, direccionEntrega.Trim());
+            compraId = _repo.RegistrarPedido(clienteId.Value, direccionEntrega.Trim(),
+                distritoId, referencia?.Trim());
         }
         catch (SqlException ex)
         {
