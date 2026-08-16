@@ -46,7 +46,7 @@ else
                     <tr data-compra="@c.CompraId">
                         <td class="fw-medium">#@c.CompraId</td>
                         <td class="text-secondary">@c.FechaCompra.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td class="text-secondary small">@c.DireccionEntrega</td>
+                        <td class="text-secondary small">@c.DireccionEntrega, @c.Distrito</td>
                         <td class="small text-secondary">
                             @c.Items producto@(c.Items == 1 ? "" : "s")
                             @if (c.Proveedores > 1)

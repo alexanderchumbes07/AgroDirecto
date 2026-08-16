@@ -17,7 +17,11 @@
     <div>
         <h1 class="mb-1">Pedido #@Model.CompraId</h1>
         <p class="text-secondary mb-0">
-            @Model.FechaCompra.ToString("dd/MM/yyyy HH:mm") · Entrega en @Model.DireccionEntrega
+            @Model.FechaCompra.ToString("dd/MM/yyyy HH:mm") · Entrega en @Model.DireccionEntrega, @Model.Distrito
+            @if (!string.IsNullOrWhiteSpace(Model.Referencia))
+            {
+                <text> (@Model.Referencia)</text>
+            }
         </p>
     </div>
     <div class="text-end">
