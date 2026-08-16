@@ -94,11 +94,35 @@ else
                 </div>
 
                 <form asp-action="Confirmar" method="post">
+                    <h3 class="h6 mb-3">Dirección de entrega</h3>
+
                     <div class="mb-3">
-                        <label for="direccionEntrega" class="form-label">Dirección de entrega</label>
-                        <textarea id="direccionEntrega" name="direccionEntrega" rows="2"
-                                  class="form-control" required
-                                  placeholder="Calle, número, distrito...">@Model.DireccionEntrega</textarea>
+                        <label for="distritoId" class="form-label">Distrito</label>
+                        <select id="distritoId" name="distritoId" class="form-select" required>
+                            <option value="">Selecciona un distrito...</option>
+                            @foreach (var d in Model.Distritos)
+                            {
+                                <option value="@d.DistritoId" selected="@(d.DistritoId == Model.DistritoId)">
+                                    @d.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccionEntrega" class="form-label">Dirección</label>
+                        <input id="direccionEntrega" name="direccionEntrega" type="text"
+                               class="form-control" required maxlength="200"
+                               placeholder="Av. / Calle, número"
+                               value="@Model.DireccionEntrega" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="referencia" class="form-label">Referencia</label>
+                        <input id="referencia" name="referencia" type="text"
+                               class="form-control" maxlength="200"
+                               placeholder="Ej. Portón verde, al costado del grifo"
+                               value="@Model.Referencia" />
                     </div>
 
                     <button type="submit" class="btn btn-agro w-100">Confirmar pedido</button>
