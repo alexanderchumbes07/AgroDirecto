@@ -1,0 +1,137 @@
+@model AgroDirecto.Web.Models.CarritoViewModel
+@{
+    ViewData["Title"] = "Mi carrito";
+}
+
+<partial name="_MensajeExito" />
+
+<nav aria-label="Ruta" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a asp-controller="PanelCliente" asp-action="Index">Mi panel</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Mi carrito</li>
+    </ol>
+</nav>
+
+<h1 class="mb-4">Mi carrito</h1>
+
+@if (Model.Vacio)
+{
+    <div class="sin-datos">
+        <div class="icono" aria-hidden="true">🛒</div>
+        <p class="mb-3">Tu carrito está vacío.</p>
+        <a class="btn btn-agro" asp-controller="Catalogo" asp-action="Index">Ir al catálogo</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="tabla-scroll">
+                <table class="table tabla-agro align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col" class="text-end">Precio</th>
+                            <th scope="col" style="width: 11rem;">Cantidad</th>
+                            <th scope="col" class="text-end">Subtotal</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var i in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-medium">@i.Nombre</div>
+                                    <div class="small text-secondary">@i.Agricultor</div>
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    S/ @i.PrecioUnitario.ToString("N2")
+                                    <div class="small text-secondary">por @i.Unidad</div>
+                                </td>
+                                <td>
+                                    <form asp-action="Actualizar" method="post" class="d-flex gap-1">
+                                        <input type="hidden" name="detalleCarritoId" value="@i.DetalleCarritoId" />
+                                        <input type="number" name="cantidad" value="@i.Cantidad.ToString("0.##")"
+                                               step="0.01" min="0" max="@i.Stock"
+                                               class="form-control form-control-sm"
+                                               aria-label="Cantidad de @i.Nombre" />
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">OK</button>
+                                    </form>
+                                    <div class="small text-secondary mt-1">Disponible: @i.Stock.ToString("0.##")</div>
+                                </td>
+                                <td class="text-end text-nowrap fw-medium">S/ @i.Subtotal.ToString("N2")</td>
+                                <td class="text-end">
+                                    <form asp-action="Quitar" method="post" class="d-inline">
+                                        <input type="hidden" name="detalleCarritoId" value="@i.DetalleCarritoId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                aria-label="Quitar @i.Nombre">Quitar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <a class="btn btn-link text-secondary mt-2 px-0"
+               asp-controller="Catalogo" asp-action="Index">← Seguir comprando</a>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel-form">
+                <h2 class="h5 mb-3">Resumen</h2>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Productos</span>
+                    <span>@Model.Items.Count</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 pt-2 border-top">
+                    <span class="fw-semibold">Total</span>
+                    <span class="fs-4 fw-bold" style="color: var(--verde-700);">
+                        S/ @Model.Total.ToString("N2")
+                    </span>
+                </div>
+
+                <form asp-action="Confirmar" method="post">
+                    <h3 class="h6 mb-3">Dirección de entrega</h3>
+
+                    <div class="mb-3">
+                        <label for="distritoId" class="form-label">Distrito</label>
+                        <select id="distritoId" name="distritoId" class="form-select" required>
+                            <option value="">Selecciona un distrito...</option>
+                            @foreach (var d in Model.Distritos)
+                            {
+                                <option value="@d.DistritoId" selected="@(d.DistritoId == Model.DistritoId)">
+                                    @d.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccionEntrega" class="form-label">Dirección</label>
+                        <input id="direccionEntrega" name="direccionEntrega" type="text"
+                               class="form-control" required maxlength="200"
+                               placeholder="Av. / Calle, número"
+                               value="@Model.DireccionEntrega" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="referencia" class="form-label">Referencia</label>
+                        <input id="referencia" name="referencia" type="text"
+                               class="form-control" maxlength="200"
+                               placeholder="Ej. Portón verde, al costado del grifo"
+                               value="@Model.Referencia" />
+                    </div>
+
+                    <button type="submit" class="btn btn-agro w-100">Confirmar pedido</button>
+                </form>
+
+                <p class="small text-secondary mt-3 mb-0">
+                    El pago se coordina directamente con el agricultor al momento de la entrega.
+                </p>
+            </div>
+        </div>
+    </div>
+}
