@@ -58,7 +58,13 @@ else
                     </div>
                     <div class="col-sm-6">
                         <div class="text-secondary small">Entregar en</div>
-                        <div>@p.DireccionEntrega</div>
+                        <div>
+                            @p.DireccionEntrega, @p.DistritoEntrega
+                            @if (!string.IsNullOrWhiteSpace(p.ReferenciaEntrega))
+                            {
+                                <text> (@p.ReferenciaEntrega)</text>
+                            }
+                        </div>
                     </div>
                 </div>
 
