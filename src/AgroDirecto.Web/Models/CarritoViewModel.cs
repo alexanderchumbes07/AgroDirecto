@@ -24,10 +24,22 @@ public class CarritoViewModel
     public decimal Total => Items.Sum(i => i.Subtotal);
     public bool Vacio => Items.Count == 0;
 
+    [Required(ErrorMessage = "Selecciona el distrito de entrega")]
+    [Display(Name = "Distrito")]
+    public int? DistritoId { get; set; }
+
     [Required(ErrorMessage = "Indica dónde entregamos el pedido")]
     [MaxLength(200, ErrorMessage = "Máximo 200 caracteres")]
-    [Display(Name = "Dirección de entrega")]
+    [Display(Name = "Dirección")]
     public string DireccionEntrega { get; set; } = string.Empty;
+
+    [MaxLength(200, ErrorMessage = "Máximo 200 caracteres")]
+    [Display(Name = "Referencia")]
+    public string? Referencia { get; set; }
+
+    // Para llenar el <select> de distritos en la vista. No viene de la BD
+    // del carrito: el controlador la carga aparte con IDistritoRepositorio.
+    public List<DistritoViewModel> Distritos { get; set; } = new();
 }
 
 /* Una compra del cliente. Por dentro se reparte en un pedido por
@@ -38,6 +50,8 @@ public class CompraViewModel
     public DateTime FechaCompra { get; set; }
     public decimal Total { get; set; }
     public string DireccionEntrega { get; set; } = string.Empty;
+    public string Distrito { get; set; } = string.Empty;
+    public string Referencia { get; set; } = string.Empty;
     public int Proveedores { get; set; }
     public int Items { get; set; }
 
@@ -56,6 +70,13 @@ public class PedidoViewModel
     public decimal Total { get; set; }
     public string Estado { get; set; } = string.Empty;
     public string DireccionEntrega { get; set; } = string.Empty;
+
+    // Distrito y referencia de la dirección de ENTREGA (adónde llevar el
+    // pedido). No confundir con DistritoAgricultor, que es de dónde es
+    // el agricultor.
+    public string DistritoEntrega { get; set; } = string.Empty;
+    public string ReferenciaEntrega { get; set; } = string.Empty;
+
     public int Items { get; set; }
 
     public string Cliente { get; set; } = string.Empty;
